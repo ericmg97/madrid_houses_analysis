@@ -1,0 +1,10 @@
+xgboost
+numpy
+pandas
+scikit-learn
+matplotlib
+ipykernel
+pyarrow
+fastparquet
+jupyter
+jupyterlab
