@@ -160,9 +160,5 @@ cython_debug/
 #.idea/
 
 
-# Add models and submissions
-data/models/*
-data/submissions/*
-
 # add macos files
 .DS_Store
