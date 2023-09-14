@@ -98,9 +98,9 @@ class ExtractDataNeighborhood(BaseEstimator, TransformerMixin):
         return ['neighborhood_id']
     
     def get_feature_names_out(self, input_features=None):
-        if self.data is 'categorical':
+        if self.data == 'categorical':
             return ['neighborhood_id', 'district_id']
-        elif self.data is 'numerical':
+        elif self.data == 'numerical':
             return ['neighborhood_id']
         else:  
             return ['neighborhood_mean_price', 'district_id']
