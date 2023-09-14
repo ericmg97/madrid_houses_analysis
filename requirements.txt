@@ -9,3 +9,4 @@ fastparquet
 jupyter
 jupyterlab
 seaborn
+optuna
