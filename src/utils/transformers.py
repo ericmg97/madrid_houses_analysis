@@ -1,21 +1,38 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 import numpy as np
 
-class RentPriceTransformer(BaseEstimator, TransformerMixin):
+class RemoveOutliersTransformer(BaseEstimator, TransformerMixin):
+    def __init__(self, columns, threshold=1.5):
+        self.columns = columns
+        self.threshold = threshold
+
     def fit(self, X, y=None):
+        # calculate the iqr for each column
+        self.iqr = {}
+        self.q1 = {}
+        self.q3 = {}
+        for column in self.columns:
+            self.q1[column] = X[column].quantile(0.25)
+            self.q3[column] = X[column].quantile(0.75)
+            self.iqr[column] = self.q3[column] - self.q1[column]
         return self
     
     def transform(self, X):
         # Apply the transformation to the 'rent_price' column
         X_copy = X.copy()
-        X_copy['rent_price'] = X_copy['rent_price'].apply(lambda x: x if 0 <= x <= 2500 else np.nan)
+        for column in self.columns:
+            if column == 'rent_price':
+                X_copy['rent_price'] = X_copy['rent_price'].apply(lambda x: x if 0 <= x <= 2500 else np.nan)
+            else:
+                X_copy[column] = X_copy[column].apply(lambda x: x if x >= self.q1[column] - self.threshold * self.iqr[column] and x <= self.q3[column] + self.threshold * self.iqr[column] else np.nan)
+        
         return X_copy
     
     def get_feature_names_in(self):
-        return ['rent_price']
+        return self.columns
     
     def get_feature_names_out(self, input_features=None):
-        return ['rent_price']
+        return self.columns
 
 # Custom transformer for handling missing values using the mode
 class FillNA(BaseEstimator, TransformerMixin):
@@ -58,18 +75,33 @@ class FillNA(BaseEstimator, TransformerMixin):
 
 
 class ExtractDataNeighborhood(BaseEstimator, TransformerMixin):
+    def __init__(self, data = None):
+        self.data = data
+
     def fit(self, X, y=None):
         return self
 
     def transform(self, X):
         X_copy = X.copy()
-        X_copy['district_id'] =  X_copy['neighborhood_id'].str.extract(r'District (\d+)')
-        X_copy['neighborhood_id'] = X_copy['neighborhood_id'].str.extract(r'\(([\d.]+) €/m2\)').astype('float')
+        if self.data is 'categorical':
+            X_copy['district_id'] =  X_copy['neighborhood_id'].str.extract(r'District (\d+)').astype('int')
+            X_copy['neighborhood_id'] = X_copy['neighborhood_id'].str.extract(r'Neighborhood (\d+)').astype('int')
+        elif self.data is 'numerical':
+            X_copy['neighborhood_id'] = X_copy['neighborhood_id'].str.extract(r'\(([\d.]+) €/m2\)').astype('float')
+        else:
+            X_copy['district_id'] =  X_copy['neighborhood_id'].str.extract(r'District (\d+)').astype('int')
+            X_copy['neighborhood_id'] = X_copy['neighborhood_id'].str.extract(r'\(([\d.]+) €/m2\)').astype('float')
+
         return X_copy
     
     def get_feature_names_in(self):
         return ['neighborhood_id']
     
     def get_feature_names_out(self, input_features=None):
-        return ['neighborhood_mean_price', 'district_id']
+        if self.data is 'categorical':
+            return ['neighborhood_id', 'district_id']
+        elif self.data is 'numerical':
+            return ['neighborhood_id']
+        else:  
+            return ['neighborhood_mean_price', 'district_id']
     
