@@ -1,5 +1,5 @@
 from sklearn import metrics
-import matplotlib.pyplot as plt
+import pandas as pd
 
 def compute_metrics(model, y_test, y_pred, y_train, y_train_pred):
   '''
@@ -32,23 +32,13 @@ def compute_metrics(model, y_test, y_pred, y_train, y_train_pred):
   
   return r2, mean_squared_error, mean_absolute_error, mape, mape_train
 
-def plot_errors(final_model, metric):
-    '''
-    Plot errors for xgboost models
+def eval_best_model(final_model, pipeline, valid_df):
 
-    Parameters:
-        final_model: model to plot errors
-        metric: metric to plot
+    Id_aux = valid_df[['id']]
 
-    Returns:
-        None
-    '''
-    
-    results = final_model.evals_result()
-    epochs = len(results['validation_0'][metric])
+    X_valid = pipeline.transform(valid_df)
+    y_valid_pred = final_model.predict(X_valid)
 
-    x_axis = range(0,epochs)
-    _, ax = plt.subplots()
-    ax.plot(x_axis, results['validation_0'][metric], label = 'Train')
-    ax.plot(x_axis, results['validation_1'][metric], label = 'Test')
-    plt.legend()
+    submission = pd.DataFrame({'id': Id_aux['id'],
+                               'buy_price_by_area': y_valid_pred})
+    return (submission)
