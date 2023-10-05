@@ -1,13 +1,12 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 import numpy as np
 
-class RemoveOutliersTransformer(BaseEstimator, TransformerMixin):
+class RemoveOutliers(BaseEstimator, TransformerMixin):
     def __init__(self, columns, threshold=1.5):
         self.columns = columns
         self.threshold = threshold
 
     def fit(self, X, y=None):
-        # calculate the iqr for each column
         self.iqr = {}
         self.q1 = {}
         self.q3 = {}
@@ -18,7 +17,6 @@ class RemoveOutliersTransformer(BaseEstimator, TransformerMixin):
         return self
     
     def transform(self, X):
-        # Apply the transformation to the 'rent_price' column
         X_copy = X.copy()
         for column in self.columns:
             if column == 'rent_price':
@@ -34,7 +32,6 @@ class RemoveOutliersTransformer(BaseEstimator, TransformerMixin):
     def get_feature_names_out(self, input_features=None):
         return self.columns
 
-# Custom transformer for handling missing values using the mode
 class FillNA(BaseEstimator, TransformerMixin):
     def __init__(self, columns, type_fill='mode'):
         self.type_fill = type_fill
@@ -101,7 +98,7 @@ class ExtractDataNeighborhood(BaseEstimator, TransformerMixin):
         if self.data == 'categorical':
             return ['neighborhood_id', 'district_id']
         elif self.data == 'numerical':
-            return ['neighborhood_id']
+            return ['neighborhood_mean_price']
         else:  
             return ['neighborhood_mean_price', 'district_id']
     
