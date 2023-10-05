@@ -32,13 +32,25 @@ def compute_metrics(model, y_test, y_pred, y_train, y_train_pred):
   
   return r2, mean_squared_error, mean_absolute_error, mape, mape_train
 
-def eval_best_model(final_model, pipeline, valid_df):
+def predict_best_model(model, pipeline, predict_df):
+    '''
+        Evaluate the best model and return a submission file
 
-    Id_aux = valid_df[['id']]
+        Parameters:
+            model: model to evaluate
+            pipeline: pipeline to transform the data
+            predict_df: dataframe with the data to predict
 
-    X_valid = pipeline.transform(valid_df)
-    y_valid_pred = final_model.predict(X_valid)
+        Returns:
+            submission: dataframe with the submission file
+    '''
+
+    Id_aux = predict_df[['id']]
+
+    X_pred = pipeline.transform(predict_df)
+    y_pred = model.predict(X_pred)
 
     submission = pd.DataFrame({'id': Id_aux['id'],
-                               'buy_price_by_area': y_valid_pred})
-    return (submission)
+                               'buy_price_by_area': y_pred})
+    
+    return submission
