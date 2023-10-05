@@ -47,13 +47,14 @@ house_price_analysis/
 ├── data/
 │   ├── raw/
 │   │   ├── train.csv
-│   │   └── test.csv
+│   │   └── predict.csv
 │   ├── processed/
 │   │   ├── train.csv
 │   │   └── test.csv
 │   ├── models/
 │   │   ├── model_1.pkl
-│   │   ├── metrics_model_1.json
+│   ├── metrics/
+│   │   └── model_1.json
 │   └── submission/
 │       ├── submission_1.csv
 │       └── submission_2.csv
@@ -75,8 +76,4 @@ This directory structure shows the organization of the project. The `data` direc
 
 ## Data
 
-The data used for this project is from the [Kaggle competition](https://www.kaggle.com/t/da3ba34f8e864187b05a2363a87f1cfe) "Machine Learning Avanzado I - Hands-on". The data is split into two files: `train.csv` and `test.csv`. The `train.csv` file contains the training data, which includes the target variable `buy_price_by_area`. The `test.csv` file contains the testing data, which does not include the target variable. The goal of the project is to predict the `buy_price_by_area` of the houses in the testing data.
-
-## License
-
-This project is licensed under the terms of the [MIT License](https://mit-license.org/).
+The data used for this project is from the [Kaggle competition](https://www.kaggle.com/t/da3ba34f8e864187b05a2363a87f1cfe) "Machine Learning Avanzado I - Hands-on". The data is split into two files: `train.csv` and `predict.csv`. The `train.csv` file contains the training data, which includes the target variable `buy_price_by_area`. The `predict.csv` file contains the submission data, which does not include the target variable. The goal of the project is to predict the `buy_price_by_area` of the houses in the `predict.csv` file.
